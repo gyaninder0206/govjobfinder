@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GovJob Finder Project Documentation</title>
+  <style>
+    :root {
+      --bg: #07111f;
+      --panel: #0f1b2d;
+      --panel-2: #13233b;
+      --text: #edf4ff;
+      --muted: #b8c7de;
+      --line: rgba(255, 255, 255, 0.1);
+      --accent: #7c9cff;
+      --accent-2: #5eead4;
+      --warn: #fbbf24;
+      --danger: #fb7185;
+      --ok: #4ade80;
+      --shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Arial, sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(124, 156, 255, 0.18), transparent 28%),
+        radial-gradient(circle at top right, rgba(94, 234, 212, 0.12), transparent 25%),
+        linear-gradient(180deg, #06101b 0%, #0a1627 100%);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    a { color: var(--accent-2); text-decoration: none; }
+    code {
+      font-family: Consolas, monospace;
+      background: rgba(255, 255, 255, 0.08);
+      padding: 2px 6px;
+      border-radius: 6px;
+    }
+
+    .layout { width: min(1200px, calc(100% - 32px)); margin: 0 auto; padding: 32px 0 64px; }
+    .hero, section {
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      box-shadow: var(--shadow);
+    }
+    .hero {
+      padding: 32px;
+      background: linear-gradient(180deg, rgba(19, 35, 59, 0.92), rgba(9, 19, 34, 0.96));
+      margin-bottom: 24px;
+    }
+    section {
+      margin-bottom: 24px;
+      padding: 28px;
+      background: rgba(15, 27, 45, 0.92);
+    }
+    .hero h1 { margin: 0 0 12px; font-size: clamp(2rem, 4vw, 3.4rem); line-height: 1.1; }
+    .hero p, .section-intro, .footer { color: var(--muted); }
+    .meta, .toc, .grid-2, .grid-3, .flow { display: grid; gap: 12px; }
+    .meta { grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); margin-top: 24px; }
+    .toc { grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); margin: 24px 0 36px; }
+    .grid-2 { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
+    .grid-3 { grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
+    .meta-card, .card, .toc a, .flow-step, .note, .mono-block {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 18px;
+    }
+    .toc a { color: var(--text); }
+    .meta-card strong { display: block; margin-bottom: 6px; font-size: 0.95rem; }
+    h2 { margin: 0 0 8px; font-size: 1.9rem; }
+    h3 { margin: 0 0 8px; font-size: 1.2rem; }
+    ul { margin: 10px 0 0 18px; padding: 0; }
+    li + li { margin-top: 6px; }
+    .badge {
+      display: inline-block; margin-right: 8px; margin-bottom: 8px; padding: 6px 10px; border-radius: 999px;
+      background: rgba(124, 156, 255, 0.15); border: 1px solid rgba(124, 156, 255, 0.3); color: #dce6ff; font-size: 0.88rem;
+    }
+    .table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 18px; }
+    table { width: 100%; border-collapse: collapse; min-width: 760px; background: rgba(255, 255, 255, 0.03); }
+    th, td { padding: 14px 16px; text-align: left; vertical-align: top; border-bottom: 1px solid var(--line); }
+    th { background: rgba(255, 255, 255, 0.05); font-size: 0.95rem; }
+    .flow-step { position: relative; }
+    .flow-step + .flow-step::before { content: "↓"; position: absolute; top: -16px; left: 16px; color: var(--accent-2); font-weight: bold; }
+    .note { border-color: rgba(251, 191, 36, 0.3); background: rgba(251, 191, 36, 0.08); color: #fff3c6; }
+    .mono-block { white-space: pre-wrap; font-family: Consolas, monospace; background: rgba(0, 0, 0, 0.24); overflow-x: auto; }
+    .footer { text-align: center; padding: 18px 8px 0; font-size: 0.92rem; }
+    @media (max-width: 700px) {
+      .layout { width: min(100% - 20px, 1200px); }
+      .hero, section { padding: 20px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <div class="hero">
+      <h1>GovJob Finder Project Documentation</h1>
+      <p>
+        This document explains the current implementation of the <strong>GovJob Finder</strong> project across the frontend and backend.
+        It covers routes, pages, middleware, APIs, data flow, authentication, save-job logic, library usage, and current limitations.
+      </p>
+      <div class="meta">
+        <div class="meta-card"><strong>Architecture</strong>React frontend + Express backend + MongoDB</div>
+        <div class="meta-card"><strong>Authentication</strong>JWT stored in an HTTP-only cookie</div>
+        <div class="meta-card"><strong>Jobs Source</strong>RapidAPI Sarkari jobs endpoint</div>
+        <div class="meta-card"><strong>Main Purpose</strong>Browse government jobs, manage profile data, and save jobs per logged-in user</div>
+      </div>
+    </div>
+
+    <div class="toc">
+      <a href="#overview">1. Project Overview</a>
+      <a href="#stack">2. Libraries and Frameworks</a>
+      <a href="#frontend-routes">3. Frontend Routes and Pages</a>
+      <a href="#frontend-components">4. Frontend Components</a>
+      <a href="#backend-routes">5. Backend Routes and APIs</a>
+      <a href="#middleware">6. Middleware and Auth</a>
+      <a href="#data-models">7. Database Model</a>
+      <a href="#data-flow">8. End-to-End Data Flow</a>
+      <a href="#functionality">9. Feature-by-Feature Logic</a>
+      <a href="#gaps">10. Current Gaps and Limitations</a>
+    </div>
+
+    <section id="overview">
+      <h2>1. Project Overview</h2>
+      <p class="section-intro">
+        The app is a full-stack job discovery product focused on government jobs. The frontend is a React single-page app.
+        The backend exposes authentication, jobs, and saved-jobs APIs. Logged-in users can browse jobs and maintain a
+        saved-jobs list in MongoDB.
+      </p>
+      <div class="grid-2">
+        <div class="card">
+          <h3>What the project currently does</h3>
+          <ul>
+            <li>Shows a marketing-style landing page.</li>
+            <li>Lets users sign up and log in.</li>
+            <li>Keeps users logged in with a cookie-based JWT.</li>
+            <li>Stores and updates user profile data in MongoDB.</li>
+            <li>Fetches government jobs from a third-party API through the backend.</li>
+            <li>Normalizes external job data into a simpler internal shape.</li>
+            <li>Lets authenticated users save and unsave jobs.</li>
+            <li>Displays saved jobs on a protected route.</li>
+            <li>Uses environment-based frontend/backend configuration for deployment.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>What it does not fully implement yet</h3>
+          <ul>
+            <li>No real resume upload API exists yet.</li>
+            <li>No personalized recommendation engine exists yet.</li>
+            <li>No advanced eligibility-matching logic exists yet.</li>
+            <li>No roles, admin features, or notifications backend exist yet.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="stack">
+      <h2>2. Libraries and Frameworks Used</h2>
+      <p class="section-intro">
+        These are the actual packages used in the codebase, grouped by responsibility.
+      </p>
+      <div class="grid-3">
+        <div class="card">
+          <h3>Frontend Core</h3>
+          <span class="badge">React 19</span>
+          <span class="badge">React DOM 19</span>
+          <span class="badge">Vite 7</span>
+          <span class="badge">react-router-dom 7</span>
+          <p>The frontend is a React SPA bootstrapped with Vite and routed with React Router.</p>
+        </div>
+        <div class="card">
+          <h3>Frontend UI / Styling</h3>
+          <span class="badge">Tailwind CSS 4</span>
+          <span class="badge">@tailwindcss/vite</span>
+          <span class="badge">framer-motion</span>
+          <span class="badge">lucide-react</span>
+          <span class="badge">lenis</span>
+          <p>Tailwind handles styling, Framer Motion handles animation, Lucide supplies icons, and Lenis provides smooth scrolling.</p>
+        </div>
+        <div class="card">
+          <h3>Backend Core</h3>
+          <span class="badge">Node.js</span>
+          <span class="badge">Express 5</span>
+          <span class="badge">dotenv</span>
+          <span class="badge">cors</span>
+          <span class="badge">cookie-parser</span>
+          <p>The backend is an Express API server with environment-based configuration and cookie parsing.</p>
+        </div>
+        <div class="card">
+          <h3>Backend Auth / DB</h3>
+          <span class="badge">mongoose</span>
+          <span class="badge">jsonwebtoken</span>
+          <span class="badge">bcryptjs</span>
+          <p>Mongoose stores users and saved jobs in MongoDB. JWT powers session identity. Bcrypt hashes passwords.</p>
+        </div>
+        <div class="card">
+          <h3>External Integration</h3>
+          <span class="badge">axios</span>
+          <span class="badge">RapidAPI</span>
+          <p>The backend fetches jobs from the Sarkari Result RapidAPI endpoint using Axios.</p>
+        </div>
+        <div class="card">
+          <h3>Developer Tooling</h3>
+          <span class="badge">nodemon</span>
+          <span class="badge">eslint</span>
+          <span class="badge">@vitejs/plugin-react</span>
+          <p>Nodemon restarts the backend in development. ESLint is configured for the React frontend. Vite React plugin handles JSX transform.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="frontend-routes">
+      <h2>3. Frontend Routes and Pages</h2>
+      <p class="section-intro">
+        The frontend route system is defined in <code>frontend/src/App.jsx</code> using <code>Routes</code>,
+        <code>Route</code>, and conditional rendering based on the <code>user</code> state.
+      </p>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Route</th>
+              <th>Page / Component</th>
+              <th>Access</th>
+              <th>What it does</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>/</code></td>
+              <td><code>Home</code></td>
+              <td>Public</td>
+              <td>Shows the landing page with hero, features, pricing, FAQ, CTA, and optional profile/resume modals.</td>
+            </tr>
+            <tr>
+              <td><code>/jobs</code></td>
+              <td><code>Jobs</code></td>
+              <td>Protected in frontend</td>
+              <td>If <code>user</code> exists, fetches jobs from the backend and allows save/unsave actions. Otherwise redirects to <code>/</code>.</td>
+            </tr>
+            <tr>
+              <td><code>/saved-jobs</code></td>
+              <td><code>SavedJobs</code></td>
+              <td>Protected in frontend</td>
+              <td>Shows the logged-in user's saved jobs. Otherwise redirects to <code>/</code>.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="grid-2" style="margin-top:16px;">
+        <div class="card">
+          <h3>Route protection logic</h3>
+          <ul>
+            <li>The app stores the current user in top-level state inside <code>App</code>.</li>
+            <li>On app load, it calls <code>/api/auth/me</code> with <code>credentials: "include"</code>.</li>
+            <li>If that call succeeds, the returned user becomes the active session user.</li>
+            <li>If it fails, the app treats the visitor as logged out.</li>
+            <li><code>/jobs</code> and <code>/saved-jobs</code> render only when <code>user</code> is truthy.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>Page-level behavior summary</h3>
+          <ul>
+            <li><strong>Home:</strong> marketing UI + modal entry points.</li>
+            <li><strong>Jobs:</strong> job fetch + save heart toggle.</li>
+            <li><strong>Saved Jobs:</strong> saved list + remove heart toggle + fallback empty state.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="frontend-components">
+      <h2>4. Frontend Components and Their Logic</h2>
+      <p class="section-intro">
+        Below is how the major UI pieces work, including real behavior behind the buttons and modals.
+      </p>
+      <div class="grid-2">
+        <div class="card">
+          <h3><code>App.jsx</code></h3>
+          <ul>
+            <li>Owns the top-level <code>user</code> state.</li>
+            <li>Owns the top-level <code>savedJobs</code> state.</li>
+            <li>Checks the current session on first render using <code>/api/auth/me</code>.</li>
+            <li>Loads saved jobs after login using <code>fetchSavedJobs()</code>.</li>
+            <li>Defines <code>toggleSavedJob(job)</code> which either saves or removes a job.</li>
+            <li>Wraps the entire UI with background visuals, navbar, router, and footer.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3><code>src/utils/api.js</code></h3>
+          <ul>
+            <li>Centralizes the frontend API base URL.</li>
+            <li>Reads <code>VITE_API_URL</code> when present.</li>
+            <li>Falls back to <code>http://localhost:5000</code> for local development.</li>
+            <li>Prevents hardcoded production URLs from being scattered across components.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3><code>Navbar.jsx</code></h3>
+          <ul>
+            <li>Shows sign-in action when logged out.</li>
+            <li>Shows initials-based user menu when logged in.</li>
+            <li>Lets the user open the saved-jobs page.</li>
+            <li>Logs the user out by calling <code>POST /api/auth/logout</code>.</li>
+            <li>Uses local component state for mobile menu, login modal, profile dropdown, and toast messages.</li>
+            <li>Closes the profile menu when the user clicks outside of it.</li>
+            <li>Uses the shared API URL helper instead of a hardcoded localhost backend.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3><code>LoginModal.jsx</code></h3>
+          <ul>
+            <li>Handles both sign up and sign in inside one modal.</li>
+            <li>In signup mode it sends <code>name</code>, <code>email</code>, and <code>password</code> to <code>/api/auth/signup</code>.</li>
+            <li>In login mode it sends <code>email</code> and <code>password</code> to <code>/api/auth/login</code> with cookies enabled.</li>
+            <li>After login it immediately calls <code>/api/auth/me</code> to fetch the user object and update app state.</li>
+            <li>Displays success and error messages directly in the modal.</li>
+            <li>Uses the shared API URL helper, making it ready for hosted environments.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3><code>GetStartedModal.jsx</code></h3>
+          <ul>
+            <li>Available only after the user is logged in.</li>
+            <li>Offers two actions: create or update profile, and upload resume.</li>
+            <li>Contains no backend communication itself.</li>
+            <li>Opens nested modal components for each action.</li>
+            <li>Closes on ESC key or backdrop click.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3><code>CreateProfileForm.jsx</code></h3>
+          <ul>
+            <li>Captures name, age, gender, qualification, category, state, email, and phone.</li>
+            <li>Prefills the form from the logged-in user if a profile already exists.</li>
+            <li>Stores in-progress values in React state while editing.</li>
+            <li>Submits the form to <code>PUT /api/auth/profile</code> with credentials included.</li>
+            <li>Updates the live authenticated user state after save so the UI reflects profile changes immediately.</li>
+            <li>Supports both first-time profile creation and later profile updates in the same modal.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3><code>UploadResumeModal.jsx</code></h3>
+          <ul>
+            <li>Lets the user pick a file locally.</li>
+            <li>Does not upload the real file to the server.</li>
+            <li>Stores file metadata only in <code>localStorage</code> under <code>userResume</code>.</li>
+            <li>Shows a temporary success state, then closes automatically.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3><code>CTA.jsx</code></h3>
+          <ul>
+            <li>Checks the authenticated user's real Mongo-backed <code>profile</code> plus the locally stored resume metadata.</li>
+            <li>If no backend profile exists, it opens the create-profile flow.</li>
+            <li>If profile exists but resume metadata does not, it opens resume upload.</li>
+            <li>If both exist, it navigates to jobs.</li>
+            <li>This means the CTA now relies on actual saved profile data instead of a client-only placeholder key.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3><code>Jobs.jsx</code> and <code>SavedJobs.jsx</code></h3>
+          <ul>
+            <li><code>Jobs</code> fetches job listings from <code>GET /api/jobs</code>.</li>
+            <li>It compares each listed job with the saved-jobs array using <code>isSameJob()</code>.</li>
+            <li>The heart button toggles save/unsave behavior through a callback from <code>App</code>.</li>
+            <li><code>SavedJobs</code> displays the user's current saved jobs from state and removes them with the same callback.</li>
+            <li>The jobs and saved-jobs helpers now use a centralized environment-aware API base.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="backend-routes">
+      <h2>5. Backend Routes and APIs</h2>
+      <p class="section-intro">
+        The backend server is defined in <code>backend/app.js</code>. It mounts three route groups under
+        <code>/api/auth</code>, <code>/api/jobs</code>, and <code>/api/saved-jobs</code>.
+      </p>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Method</th>
+              <th>Route</th>
+              <th>Protected</th>
+              <th>Purpose</th>
+              <th>Main Logic</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>GET</td>
+              <td><code>/</code></td>
+              <td>No</td>
+              <td>Health-style root endpoint</td>
+              <td>Returns simple text: <code>Jobs API running</code>.</td>
+            </tr>
+            <tr>
+              <td>POST</td>
+              <td><code>/api/auth/signup</code></td>
+              <td>No</td>
+              <td>Create user account</td>
+              <td>Checks if email exists, hashes password with bcrypt, inserts user into MongoDB.</td>
+            </tr>
+            <tr>
+              <td>POST</td>
+              <td><code>/api/auth/login</code></td>
+              <td>No</td>
+              <td>Log user in</td>
+              <td>Validates credentials, signs JWT, sets <code>token</code> HTTP-only cookie using environment-aware cookie options, and returns basic user info.</td>
+            </tr>
+            <tr>
+              <td>POST</td>
+              <td><code>/api/auth/logout</code></td>
+              <td>No</td>
+              <td>Log user out</td>
+              <td>Clears the <code>token</code> cookie.</td>
+            </tr>
+            <tr>
+              <td>GET</td>
+              <td><code>/api/auth/me</code></td>
+              <td>Yes</td>
+              <td>Get current authenticated user</td>
+              <td>Uses JWT from cookie, loads user from DB, removes password from response, and returns the user's profile if present.</td>
+            </tr>
+            <tr>
+              <td>PUT</td>
+              <td><code>/api/auth/profile</code></td>
+              <td>Yes</td>
+              <td>Create or update profile</td>
+              <td>Validates profile fields, updates name and email, writes the nested profile object to MongoDB, and returns the updated user.</td>
+            </tr>
+            <tr>
+              <td>GET</td>
+              <td><code>/api/jobs</code></td>
+              <td>No</td>
+              <td>Fetch government jobs</td>
+              <td>Gets jobs from cache or RapidAPI, normalizes fields, returns simplified array.</td>
+            </tr>
+            <tr>
+              <td>GET</td>
+              <td><code>/api/saved-jobs</code></td>
+              <td>Yes</td>
+              <td>Get saved jobs</td>
+              <td>Returns <code>req.user.savedJobs</code>.</td>
+            </tr>
+            <tr>
+              <td>POST</td>
+              <td><code>/api/saved-jobs</code></td>
+              <td>Yes</td>
+              <td>Save a job</td>
+              <td>Validates title and link, prevents duplicates, prepends the job, saves the user document.</td>
+            </tr>
+            <tr>
+              <td>DELETE</td>
+              <td><code>/api/saved-jobs</code></td>
+              <td>Yes</td>
+              <td>Remove a saved job</td>
+              <td>Filters matching job out of the user's saved-jobs array and saves the user document.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="middleware">
+      <h2>6. Middleware and Authentication Logic</h2>
+      <p class="section-intro">
+        The backend uses both global middleware and one custom route-protection middleware.
+      </p>
+      <div class="grid-2">
+        <div class="card">
+          <h3>Global middleware in <code>backend/app.js</code></h3>
+          <ul>
+            <li><code>express.json()</code> parses incoming JSON bodies.</li>
+            <li><code>bodyparser.urlencoded({ extended: true })</code> parses URL-encoded form bodies.</li>
+            <li><code>cookieParser()</code> makes cookies available at <code>req.cookies</code>.</li>
+            <li><code>cors(...)</code> uses a whitelist derived from <code>FRONTEND_URL</code> and supports credentials.</li>
+            <li>The server listens on <code>process.env.PORT || 5000</code>, which makes it compatible with hosted Node platforms such as Render.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>Custom auth middleware: <code>requireAuth</code></h3>
+          <ul>
+            <li>Reads <code>req.cookies.token</code>.</li>
+            <li>If there is no token, returns <code>401 Not authenticated</code>.</li>
+            <li>Verifies the token using <code>JWT_SECRET</code>.</li>
+            <li>Loads the user by decoded ID from MongoDB.</li>
+            <li>If the user is missing, returns <code>401 User not found</code>.</li>
+            <li>On success attaches the Mongoose user document to <code>req.user</code>.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="flow" style="margin-top:16px;">
+        <div class="flow-step"><strong>Login:</strong> frontend posts credentials to <code>/api/auth/login</code>.</div>
+        <div class="flow-step">Backend validates the password and signs a JWT containing the user ID.</div>
+        <div class="flow-step">Backend sets the JWT as an HTTP-only cookie named <code>token</code>.</div>
+        <div class="flow-step">Cookie settings switch by environment: local uses <code>sameSite: "lax"</code>, production uses <code>secure: true</code> and <code>sameSite: "none"</code>.</div>
+        <div class="flow-step">Frontend later calls protected endpoints with <code>credentials: "include"</code>.</div>
+        <div class="flow-step"><code>requireAuth</code> verifies the cookie and reconstructs the logged-in user.</div>
+      </div>
+    </section>
+
+    <section id="data-models">
+      <h2>7. Database Model</h2>
+      <p class="section-intro">
+        The app currently has one MongoDB model: <code>User</code>.
+      </p>
+      <div class="card">
+        <h3><code>User</code> schema fields</h3>
+        <ul>
+          <li><code>name</code>: required string</li>
+          <li><code>email</code>: required unique string</li>
+          <li><code>password</code>: required hashed string</li>
+          <li><code>profile</code>: optional embedded profile object</li>
+          <li><code>savedJobs</code>: array of embedded objects</li>
+        </ul>
+        <p><strong>Profile object fields:</strong></p>
+        <ul>
+          <li><code>age</code>: number</li>
+          <li><code>gender</code>: string</li>
+          <li><code>qualification</code>: string</li>
+          <li><code>category</code>: string</li>
+          <li><code>state</code>: string</li>
+          <li><code>phone</code>: string</li>
+        </ul>
+        <p><strong>Each saved job object contains:</strong></p>
+        <ul>
+          <li><code>title</code>: required string</li>
+          <li><code>lastDate</code>: string, default <code>"Not specified"</code></li>
+          <li><code>applyLink</code>: required string</li>
+          <li><code>savedAt</code>: date, default current time</li>
+        </ul>
+        <p><strong>Schema timestamps:</strong> enabled, so each user also has <code>createdAt</code> and <code>updatedAt</code>.</p>
+      </div>
+    </section>
+
+    <section id="data-flow">
+      <h2>8. End-to-End Data Flow</h2>
+      <p class="section-intro">
+        This section explains how data moves through the system for the core user journeys.
+      </p>
+      <div class="grid-2">
+        <div class="card">
+          <h3>Sign up flow</h3>
+          <div class="flow">
+            <div class="flow-step">User opens <code>LoginModal</code> and switches to signup mode.</div>
+            <div class="flow-step">Frontend sends <code>name</code>, <code>email</code>, <code>password</code> to <code>POST /api/auth/signup</code>.</div>
+            <div class="flow-step">Backend checks whether the email already exists.</div>
+            <div class="flow-step">Backend hashes the password with bcrypt and inserts the user.</div>
+            <div class="flow-step">Frontend shows success message and asks the user to log in manually.</div>
+          </div>
+        </div>
+        <div class="card">
+          <h3>Login flow</h3>
+          <div class="flow">
+            <div class="flow-step">User submits email and password in login mode.</div>
+            <div class="flow-step">Backend validates user existence and password correctness.</div>
+            <div class="flow-step">Backend creates a 7-day JWT and sets the cookie.</div>
+            <div class="flow-step">Frontend then requests <code>GET /api/auth/me</code>.</div>
+            <div class="flow-step">Returned user object is stored in the top-level React state.</div>
+          </div>
+        </div>
+        <div class="card">
+          <h3>Session restore on page load</h3>
+          <div class="flow">
+            <div class="flow-step"><code>App.jsx</code> runs a startup <code>useEffect</code>.</div>
+            <div class="flow-step">It calls <code>GET /api/auth/me</code> with cookies included.</div>
+            <div class="flow-step">If valid, the app restores the full user, including profile data, and then loads saved jobs.</div>
+            <div class="flow-step">If invalid, the app clears the user state and treats the visitor as logged out.</div>
+          </div>
+        </div>
+        <div class="card">
+          <h3>Profile save / update flow</h3>
+          <div class="flow">
+            <div class="flow-step">Signed-in user opens Get Started and chooses create or update profile.</div>
+            <div class="flow-step"><code>CreateProfileForm</code> preloads existing user and profile values if present.</div>
+            <div class="flow-step">Frontend submits the form to <code>PUT /api/auth/profile</code> with cookies included.</div>
+            <div class="flow-step">Backend validates input, updates the user document, and stores the nested profile object in MongoDB.</div>
+            <div class="flow-step">Frontend replaces the in-memory user state with the returned updated user object.</div>
+          </div>
+        </div>
+        <div class="card">
+          <h3>Jobs fetch flow</h3>
+          <div class="flow">
+            <div class="flow-step"><code>Jobs.jsx</code> fetches <code>GET /api/jobs</code>.</div>
+            <div class="flow-step">Backend calls <code>getCachedJobs(fetchExternalJobs)</code>.</div>
+            <div class="flow-step">If cache is fresh, cached data is used; otherwise RapidAPI is called.</div>
+            <div class="flow-step">Raw external data is normalized into <code>{ title, lastDate, applyLink }</code>.</div>
+            <div class="flow-step">Frontend renders cards and uses saved-jobs state to mark saved items.</div>
+          </div>
+        </div>
+        <div class="card">
+          <h3>Save job flow</h3>
+          <div class="flow">
+            <div class="flow-step">User clicks the heart icon on a job card.</div>
+            <div class="flow-step"><code>App.toggleSavedJob</code> checks whether the job already exists in local state.</div>
+            <div class="flow-step">If not saved, frontend calls <code>POST /api/saved-jobs</code> with the job object.</div>
+            <div class="flow-step">Backend validates, deduplicates, prepends the job, saves the user document, and returns the updated list.</div>
+            <div class="flow-step">Frontend replaces <code>savedJobs</code> state with the returned array.</div>
+          </div>
+        </div>
+        <div class="card">
+          <h3>Remove saved job flow</h3>
+          <div class="flow">
+            <div class="flow-step">User clicks the heart icon on an already-saved job.</div>
+            <div class="flow-step">Frontend calls <code>DELETE /api/saved-jobs</code> with the job object in the request body.</div>
+            <div class="flow-step">Backend filters that job out of <code>req.user.savedJobs</code>.</div>
+            <div class="flow-step">Backend saves the user document and returns the updated list.</div>
+            <div class="flow-step">Frontend updates <code>savedJobs</code> state from the response.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="functionality">
+      <h2>9. Feature-by-Feature Logic</h2>
+      <p class="section-intro">
+        This is the logic behind each important visible feature in the current codebase.
+      </p>
+      <div class="grid-2">
+        <div class="card">
+          <h3>Landing page</h3>
+          <ul>
+            <li>Built from <code>Hero</code>, <code>Features</code>, <code>Pricing</code>, <code>Faq</code>, and <code>CTA</code>.</li>
+            <li>Most content here is static marketing content from component files and <code>dummy-data.jsx</code>.</li>
+            <li>Framer Motion animates entrance effects for sections and cards.</li>
+            <li>The landing page now also acts as the entry point for real profile creation and updates for signed-in users.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>Deployment readiness</h3>
+          <ul>
+            <li>The frontend now uses <code>VITE_API_URL</code> instead of hardcoded API URLs.</li>
+            <li>The backend now supports configurable frontend origins via <code>FRONTEND_URL</code>.</li>
+            <li>The backend includes a production-friendly <code>start</code> script.</li>
+            <li>The frontend build script is now <code>vite build</code>, which matches the current repo setup better than the previous TypeScript-based command.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>Smooth scrolling and visual effects</h3>
+          <ul>
+            <li><code>LenisScroll</code> installs Lenis and drives it using <code>requestAnimationFrame</code>.</li>
+            <li><code>SoftBackdrop</code> renders fixed blurred gradient blobs behind the UI.</li>
+            <li><code>index.css</code> imports Tailwind and the Outfit font, plus custom marquee and utility classes.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>Saved jobs identity logic</h3>
+          <ul>
+            <li>Both frontend and backend identify a job primarily by <code>applyLink</code>.</li>
+            <li>Fallback identity is <code>title-lastDate</code> if needed.</li>
+            <li>This shared logic helps keep save/unsave behavior consistent.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>Job caching logic</h3>
+          <ul>
+            <li>The backend keeps jobs in in-memory variables: <code>cachedJobs</code> and <code>lastFetchTime</code>.</li>
+            <li>Cache duration is 1 hour.</li>
+            <li>This reduces external API calls while the server process stays alive.</li>
+            <li>Important limitation: the cache resets when the backend restarts.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>Normalization logic</h3>
+          <ul>
+            <li>The external API response is expected to have a <code>data</code> array.</li>
+            <li>Each raw job is converted to only three frontend-facing fields.</li>
+            <li>This keeps the frontend simple and decouples it from the third-party response shape.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>Linting setup</h3>
+          <ul>
+            <li>The frontend uses ESLint with React Hooks and React Refresh rules.</li>
+            <li>The noisy base <code>no-unused-vars</code> rule has been disabled in the current config because it was falsely flagging JSX-used imports.</li>
+            <li>The remaining lint pass is clean apart from a non-blocking package freshness notice.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>Logout logic</h3>
+          <ul>
+            <li>Navbar calls <code>POST /api/auth/logout</code>.</li>
+            <li>Backend clears the auth cookie.</li>
+            <li>Frontend clears local user state, closes menus, shows a toast, and navigates home.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="gaps">
+      <h2>10. Current Gaps, Risks, and Important Notes</h2>
+      <p class="section-intro">
+        These are key implementation realities that matter if someone is onboarding to the project or extending it.
+      </p>
+      <div class="note">
+        <strong>Profile persistence is now real, but resume and recommendation features are still partial.</strong>
+        The application now stores user profile data in MongoDB, but resume upload is still local-only and personalized recommendations
+        are not yet generated from profile data.
+      </div>
+      <div class="grid-2" style="margin-top:16px;">
+        <div class="card">
+          <h3>Gaps in current functionality</h3>
+          <ul>
+            <li>Profile data is stored, but it is not yet used to filter or rank jobs.</li>
+            <li><code>UploadResumeModal</code> stores only file metadata locally, not the actual file.</li>
+            <li>There is no recommendation engine, despite UI text suggesting personalization.</li>
+            <li>Pricing plans are display-only and have no payment or subscription logic.</li>
+            <li>The backend does not yet persist enriched job metadata beyond the three normalized fields returned from the external API.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>Security and production notes</h3>
+          <ul>
+            <li>The JWT cookie behavior is now environment-aware: local development uses relaxed settings, while production uses secure cross-site cookie settings.</li>
+            <li>CORS is now driven by <code>FRONTEND_URL</code> and can accept multiple comma-separated origins.</li>
+            <li>There is little request validation beyond presence checks.</li>
+            <li>There is no rate limiting, no CSRF mitigation layer, and no centralized error handling yet.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="card" style="margin-top:16px;">
+        <h3>Environment variables used</h3>
+        <div class="mono-block"># Backend
+PORT=5000
+FRONTEND_URL=http://localhost:5173
+MONGO_URI=your_mongodb_connection_string
+JWT_SECRET=your_jwt_secret
+RAPIDAPI_KEY=your_rapidapi_key
+RAPIDAPI_HOST=your_rapidapi_host
+
+# Frontend
+VITE_API_URL=http://localhost:5000</div>
+      </div>
+      <div class="card" style="margin-top:16px;">
+        <h3>Deployment notes</h3>
+        <ul>
+          <li>The project is now structured to support a split deployment such as Vercel for the frontend and Render for the backend.</li>
+          <li>In production, the frontend should use the hosted backend URL through <code>VITE_API_URL</code>.</li>
+          <li>The backend should use the hosted frontend URL in <code>FRONTEND_URL</code> so credentialed requests are accepted by CORS.</li>
+          <li>MongoDB Atlas is the natural production database choice for this codebase.</li>
+        </ul>
+      </div>
+      <div class="card" style="margin-top:16px;">
+        <h3>Practical summary</h3>
+        <p>
+          The current project is best described as a strong starter full-stack app with working authentication, job fetching,
+          saved-jobs persistence, MongoDB-backed profile creation and editing, and environment-based deployment configuration.
+          The marketing copy still promises more than the implementation currently delivers around resume intelligence and
+          personalized recommendations, but the core auth, profile, save-job, and deployment-ready runtime flows are now real.
+        </p>
+      </div>
+    </section>
+
+    <div class="footer">
+      Generated from the current repository structure and source code for GovJob Finder.
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,31 @@
+<svg width="760" height="180" viewBox="0 0 760 180" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="shieldGradient" x1="24" y1="16" x2="124" y2="148" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#38BDF8"/>
+      <stop offset="1" stop-color="#2563EB"/>
+    </linearGradient>
+    <linearGradient id="checkGradient" x1="46" y1="84" x2="106" y2="84" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#E2E8F0"/>
+      <stop offset="1" stop-color="#FFFFFF"/>
+    </linearGradient>
+    <filter id="logoGlow" x="0" y="0" width="156" height="172" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feFlood flood-opacity="0" result="BackgroundImageFix"/>
+      <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+      <feOffset dy="4"/>
+      <feGaussianBlur stdDeviation="6"/>
+      <feComposite in2="hardAlpha" operator="out"/>
+      <feColorMatrix type="matrix" values="0 0 0 0 0.145098 0 0 0 0 0.388235 0 0 0 0 0.921569 0 0 0 0.45 0"/>
+      <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_1_1"/>
+      <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_1_1" result="shape"/>
+    </filter>
+  </defs>
+
+  <g filter="url(#logoGlow)">
+    <path d="M78 16L124 34V72C124 104 104 129 78 144C52 129 32 104 32 72V34L78 16Z" fill="url(#shieldGradient)"/>
+    <path d="M78 24L116 39V71C116 99 100 121 78 135C56 121 40 99 40 71V39L78 24Z" fill="#0B1220" fill-opacity="0.22"/>
+    <path d="M57 83L70 96L99 67" stroke="url(#checkGradient)" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+
+  <text x="160" y="78" fill="#F8FAFC" font-size="52" font-weight="700" letter-spacing="1.5" font-family="Outfit, Segoe UI, Arial, sans-serif">GOVJOB</text>
+  <text x="160" y="126" fill="#93C5FD" font-size="38" font-weight="500" letter-spacing="9" font-family="Outfit, Segoe UI, Arial, sans-serif">FINDER</text>
+</svg>
