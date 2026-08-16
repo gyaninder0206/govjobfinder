@@ -95,6 +95,7 @@ function App() {
           element={
             user ? (
               <Jobs
+                user={user}
                 savedJobs={savedJobs}
                 onToggleSaveJob={toggleSavedJob}
               />

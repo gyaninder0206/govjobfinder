@@ -1,5 +1,4 @@
 export function normalizeJobs(apiResponse) {
-  // extract the array safely
   const jobsArray = apiResponse.data;
 
   if (!Array.isArray(jobsArray)) {
@@ -7,8 +6,8 @@ export function normalizeJobs(apiResponse) {
   }
 
   return jobsArray.map((job) => ({
-    title: job.title,
-    lastDate: job.last_date,
-    applyLink: job.link,
+    title: job.title?.trim() || "Untitled job",
+    lastDate: job.last_date?.trim() || "Not specified",
+    applyLink: job.link?.trim() || "",
   }));
 }

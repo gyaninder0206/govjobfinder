@@ -1,4 +1,4 @@
-import { ArrowRightIcon, PlayIcon, ZapIcon, CheckIcon } from "lucide-react";
+import { ArrowRightIcon, ZapIcon, CheckIcon } from "lucide-react";
 import { PrimaryButton, GhostButton } from "./Buttons";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
@@ -99,13 +99,21 @@ export default function Home({ user }) {
                     navigate("/jobs");
                   }}
                 >
-                  Find a job <ArrowRightIcon className="h-4 w-4" />
+                  Find Jobs <ArrowRightIcon className="h-4 w-4" />
                 </PrimaryButton>
 
-                {/* <GhostButton className="w-full px-5 py-3 sm:w-auto">
-                  <PlayIcon className="h-4 w-4" />
-                  View our work
-                </GhostButton> */}
+                <GhostButton
+                  className="w-full px-5 py-3 sm:w-auto"
+                  onClick={() => {
+                    if (!user) {
+                      alert("Please login first");
+                      return;
+                    }
+                    navigate("/jobs?personalized=true");
+                  }}
+                >
+                  Personalized Jobs
+                </GhostButton>
               </motion.div>
 
               <motion.div
